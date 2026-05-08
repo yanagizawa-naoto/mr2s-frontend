@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Graph3DVisualization } from "./Graph3DVisualization.tsx";
 import {
   ReactFlow,
   Background,
@@ -178,6 +179,8 @@ export function GraphVisualization({
     }
   }, [parsedGraph, directedEdges]);
 
+  const [view3D, setView3D] = useState(false);
+
   if (!hasDrawn) {
     return (
       <div className="graph-placeholder">
@@ -191,22 +194,47 @@ export function GraphVisualization({
   }
 
   return (
-    <div className="graph-viz">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        fitView
-        fitViewOptions={{ padding: 0.2 }}
-        minZoom={0.01}
-        maxZoom={100}
+    <div className="graph-viz" style={{ position: "relative" }}>
+      <button
+        onClick={() => setView3D(!view3D)}
+        style={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          zIndex: 10,
+          padding: "6px 14px",
+          borderRadius: 6,
+          border: "1px solid var(--border-input, #555)",
+          background: "var(--btn-secondary-bg, #222)",
+          color: "var(--text, #fff)",
+          cursor: "pointer",
+          fontSize: 13,
+        }}
       >
-        <Background />
-        <Controls />
-        <MiniMap />
-      </ReactFlow>
+        {view3D ? "2D" : "3D"}
+      </button>
+      {view3D ? (
+        <Graph3DVisualization
+          parsedGraph={parsedGraph}
+          directedEdges={directedEdges}
+        />
+      ) : (
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          fitView
+          fitViewOptions={{ padding: 0.2 }}
+          minZoom={0.01}
+          maxZoom={100}
+        >
+          <Background />
+          <Controls />
+          <MiniMap />
+        </ReactFlow>
+      )}
     </div>
   );
 }
