@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Line, Text } from "@react-three/drei";
 import type { ParsedGraph, OptimizedDirectedEdge } from "../types";
-import { optimizeLayout3D } from "../utils/planarLayout3D";
+import { optimizeLayout2_5D } from "../utils/planarLayout2_5D";
 import { useMemo } from "react";
 
 type Graph3DVisualizationProps = {
@@ -89,20 +89,16 @@ export function Graph3DVisualization({
       vertexToIdx.get(v) ?? 0,
     ]);
 
-    // Sphere initial positions
+    // Circle initial positions on xy plane (z=0)
     const initPos: [number, number, number][] = parsedGraph.vertices.map(
-      (_, i) => {
-        const phi = Math.acos(1 - (2 * (i + 0.5)) / n);
-        const theta = Math.PI * (1 + Math.sqrt(5)) * i;
-        return [
-          50 + 30 * Math.sin(phi) * Math.cos(theta),
-          50 + 30 * Math.sin(phi) * Math.sin(theta),
-          50 + 30 * Math.cos(phi),
-        ];
-      },
+      (_, i) => [
+        50 + 40 * Math.cos((2 * Math.PI * i) / n),
+        50 + 40 * Math.sin((2 * Math.PI * i) / n),
+        0,
+      ],
     );
 
-    const result = optimizeLayout3D({ n, edges: edges0, positions: initPos });
+    const result = optimizeLayout2_5D({ n, edges: edges0, positions: initPos });
 
     // Center around origin for Three.js
     let cx = 0, cy = 0, cz = 0;
