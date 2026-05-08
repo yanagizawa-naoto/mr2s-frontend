@@ -107,13 +107,15 @@ export function Graph3DVisualization({
     }
     cx /= n; cy /= n; cz /= n;
 
+    // Three.js: y=上。レイアウト: x,y=平面, z=高さ
+    // マッピング: Three.x = layout.x, Three.y = layout.z(高さ), Three.z = layout.y
     return {
       positions: result.positions.map(
         (p) =>
           [
             (p[0] - cx) * (SCALE / 10),
-            (p[1] - cy) * (SCALE / 10),
             (p[2] - cz) * (SCALE / 10),
+            (p[1] - cy) * (SCALE / 10),
           ] as [number, number, number],
       ),
       edges: edges0,
@@ -132,7 +134,7 @@ export function Graph3DVisualization({
 
   return (
     <div style={{ width: "100%", height: "100%", minHeight: 500 }}>
-      <Canvas camera={{ position: [80, 60, 80], fov: 50 }}>
+      <Canvas camera={{ position: [0, 80, 60], fov: 50 }}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[50, 100, 50]} intensity={0.8} />
         <hemisphereLight args={[0xffffff, 0x444444, 0.4]} />
